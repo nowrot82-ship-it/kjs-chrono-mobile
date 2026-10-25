@@ -10,7 +10,7 @@
 </style>
 </head>
 <body><main>
-<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.2.1 · DEMO</span></div>
+<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.2.3 · DEMO</span></div>
 <section class="panel"><div class="grid"><div><label for="os">ODCINEK</label><select id="os"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
 <div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
 <label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"><p class="hint">Możesz odbić czas bez numeru i uzupełnić go później w historii.</p></section>
@@ -76,18 +76,19 @@ $('capture').addEventListener('click',function(){
  records.unshift(r);
  var ok=persist();
  if(ok)$('status').textContent='✓ Odbito '+r.mode+' · #'+(r.crew||'BRAK NR')+' · '+r.time;
+ if(ok)$('crew').value='';
  if(navigator.vibrate)navigator.vibrate(40);
  render();
 });
 $('export').addEventListener('click',async function(){
  if(!records.length){alert('Nie ma jeszcze pomiarów do zapisania.');return}
- var lines=['KJS CHRONO MOBILE v1.2.1 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: wersja demonstracyjna — bez wysyłki do Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID'];
+ var lines=['KJS CHRONO MOBILE v1.2.3 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: wersja demonstracyjna — bez wysyłki do Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID'];
  records.slice().reverse().forEach(function(r){
   lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||''].join(' | '));
   (r.corrections||[]).forEach(function(c){lines.push('  KOREKTA NR: '+c.from+' -> '+c.to+' ('+c.at+')')});
  });
- var content=lines.join('\\r\\n')+'\\r\\n';
- var blob=new Blob(['\\ufeff'+content],{type:'text/plain;charset=utf-8'});
+ var content=lines.join('\r\n')+'\r\n';
+ var blob=new Blob(['\ufeff'+content],{type:'text/plain;charset=utf-8'});
  var filename='KJS_CHRONO_'+new Date().toISOString().slice(0,10)+'.txt';
  var file;
  try{
