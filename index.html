@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827">
-<title>KJS CHRONO MOBILE — DEMO</title>
+<title>KJS CHRONO MOBILE v1.2 — DEMO</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;background:#0d1422;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}main{max-width:540px;margin:auto;padding:18px 0 35px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}.tag{font-size:11px;padding:7px 9px;border-radius:20px;background:#26354c;color:#d7e4f9}.panel{background:#172338;border:1px solid #31415b;border-radius:18px;padding:17px;margin-top:15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:#b6c5d9;display:block;margin-bottom:7px}select,input{width:100%;border:1px solid #425571;background:#0f1b2d;color:white;padding:14px 12px;border-radius:12px;font-size:20px}input{font-size:26px;font-weight:700;text-align:center}.clock{text-align:center;padding:22px 0 14px}.clock small{color:#b6c5d9}.clock strong{display:block;font-variant-numeric:tabular-nums;font-size:clamp(35px,9vw,52px);letter-spacing:1px;margin-top:8px}.clock p{font-size:12px;color:#a9c6de;margin:6px 0 0}.capture{width:100%;border:0;border-radius:18px;padding:27px 12px;font-size:27px;font-weight:900;background:#18a558;color:white;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.capture.meta{background:#e36c20}.capture:active{transform:scale(.985)}.status{min-height:26px;margin:13px 0 0;text-align:center;color:#b7f6d0;font-size:14px}.history-head{display:flex;align-items:center;justify-content:space-between}h2{font-size:17px;margin:0}button.small{background:#293a55;color:#fff;border:1px solid #49607f;padding:9px 12px;border-radius:9px}.entry{padding:12px 0;border-top:1px solid #31415b;display:flex;justify-content:space-between;gap:8px;align-items:center}.entry:first-child{border-top:0}.entry strong{font-size:17px}.entry span{color:#b7c9df;font-size:12px}.muted{color:#9eb1ca;font-size:13px;line-height:1.5}.warning{color:#ffcf8d;font-size:12px;line-height:1.5}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;background:#0d1422;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}main{max-width:540px;margin:auto;padding:18px 0 35px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}.tag{font-size:11px;padding:7px 9px;border-radius:20px;background:#26354c;color:#d7e4f9}.panel{background:#172338;border:1px solid #31415b;border-radius:18px;padding:17px;margin-top:15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:#b6c5d9;display:block;margin-bottom:7px}select,input{width:100%;border:1px solid #425571;background:#0f1b2d;color:white;padding:14px 12px;border-radius:12px;font-size:20px}input{font-size:26px;font-weight:700;text-align:center}.clock{text-align:center;padding:22px 0 14px}.clock small{color:#b6c5d9}.clock strong{display:block;font-variant-numeric:tabular-nums;font-size:clamp(35px,9vw,52px);letter-spacing:1px;margin-top:8px}.clock p{font-size:12px;color:#a9c6de;margin:6px 0 0}.capture{width:100%;border:0;border-radius:18px;padding:27px 12px;font-size:27px;font-weight:900;background:#18a558;color:white;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.capture.meta{background:#e36c20}.capture:active{transform:scale(.985)}.status{min-height:26px;margin:13px 0 0;text-align:center;color:#b7f6d0;font-size:14px}.history-head{display:flex;align-items:center;justify-content:space-between}h2{font-size:17px;margin:0}button.small{background:#293a55;color:#fff;border:1px solid #49607f;padding:9px 12px;border-radius:9px}.entry{padding:12px 0;border-top:1px solid #31415b;display:flex;justify-content:space-between;gap:8px;align-items:center}.entry:first-child{border-top:0}.entry strong{font-size:17px}.entry span{color:#b7c9df;font-size:12px}.muted{color:#9eb1ca;font-size:13px;line-height:1.5}.warning{color:#ffcf8d;font-size:12px;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}.edit{margin-top:10px;padding:12px;background:#0f1b2d;border-radius:12px}.edit input{font-size:20px}.edit button{margin-top:9px}.entry{align-items:flex-start}.entry .small{margin-top:8px}.save{background:#116b45!important}.hint{font-size:12px;color:#b6c5d9;margin:7px 0 0}
 </style>
 </head>
 <body><main>
-<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">DEMO · OFFLINE</span></div>
+<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.2 · DEMO</span></div>
 <section class="panel"><div class="grid"><div><label for="os">ODCINEK</label><select id="os"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
 <div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
-<label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"></section>
+<label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"><p class="hint">Możesz odbić czas bez numeru i uzupełnić go później w historii.</p></section>
 <section class="panel"><button class="capture" id="capture" type="button">ODBIJ START</button><div class="status" id="status" role="status">Gotowy do pomiaru</div></section>
-<section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><button type="button" class="small" id="clear">Wyczyść demo</button></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
+<section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><div class="actions"><button type="button" class="small save" id="export">ZAPISZ TXT</button><button type="button" class="small" id="clear">Wyczyść demo</button></div></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
 <p class="warning">⚠️ Wersja demonstracyjna. Nic nie jest wysyłane do arkusza Google. Pomiar ręczny i zegary różnych urządzeń wymagają osobnej weryfikacji przed rajdem.</p>
 </main><script>
 (function(){
@@ -27,11 +27,87 @@ try{records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray
 function two(n){return String(n).padStart(2,'0')}
 function time(d){return two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds())+','+two(Math.floor(d.getMilliseconds()/10))}
 function tick(){$('clock').textContent=time(new Date())}
-function render(){var box=$('history');box.textContent='';if(!records.length){box.textContent='Brak pomiarów.';return}records.slice(0,25).forEach(function(r){var div=document.createElement('div');div.className='entry';var left=document.createElement('div');var title=document.createElement('strong');title.textContent='#'+r.crew+' · '+r.mode+' · '+r.os;var info=document.createElement('div');info.textContent=r.date;info.className='muted';left.appendChild(title);left.appendChild(info);var right=document.createElement('span');right.textContent=r.time;div.appendChild(left);div.appendChild(right);box.appendChild(div)})}
+function persist(){try{localStorage.setItem(storageKey,JSON.stringify(records));return true}catch(e){$('status').textContent='UWAGA: Nie udało się zapisać w pamięci. Wyeksportuj TXT!';return false}}
+function element(tag,cls,value){var x=document.createElement(tag);if(cls)x.className=cls;if(value!==undefined)x.textContent=value;return x}
+function render(){
+ var box=$('history');box.textContent='';
+ if(!records.length){box.textContent='Brak pomiarów.';return}
+ records.forEach(function(r){
+  var div=element('div','entry');
+  var left=element('div');
+  var title=element('strong','', '#'+(r.crew||'BRAK NR')+' · '+r.mode+' · '+r.os);
+  var info=element('div','muted',r.date);
+  var stamp=element('div','',r.time);
+  stamp.style.fontWeight='700';
+  var editBtn=element('button','small','Edytuj nr');
+  editBtn.type='button';
+  var editArea=element('div','edit');
+  editArea.hidden=true;
+  var lbl=element('label','', 'Numer załogi (puste = brak numeru)');
+  var inp=element('input');
+  inp.type='text';inp.inputMode='numeric';inp.value=r.crew||'';inp.maxLength=4;
+  var saveBtn=element('button','small save','Zapisz poprawkę');saveBtn.type='button';
+  var cancelBtn=element('button','small','Anuluj');cancelBtn.type='button';
+  editBtn.addEventListener('click',function(){editArea.hidden=!editArea.hidden;if(!editArea.hidden)inp.focus()});
+  cancelBtn.addEventListener('click',function(){editArea.hidden=true;inp.value=r.crew||''});
+  saveBtn.addEventListener('click',function(){
+   var v=inp.value.trim();
+   if(v && !/^\\d{1,4}$/.test(v)){alert('Numer musi mieć od 1 do 4 cyfr.');return}
+   var previous=r.crew||'BRAK NR';
+   if(!Array.isArray(r.corrections))r.corrections=[];
+   if(previous!==(v||'BRAK NR'))r.corrections.push({from:previous,to:v||'BRAK NR',at:new Date().toISOString()});
+   r.crew=v;
+   persist();$('status').textContent='✓ Poprawiono numer. Oryginalny czas nie został zmieniony.';
+   render();
+  });
+  editArea.appendChild(lbl);editArea.appendChild(inp);editArea.appendChild(saveBtn);editArea.appendChild(cancelBtn);
+  left.appendChild(title);left.appendChild(info);left.appendChild(editBtn);left.appendChild(editArea);
+  var right=element('span','',r.time);
+  div.appendChild(left);div.appendChild(right);box.appendChild(div);
+ });
+}
 function updateMode(){var meta=$('mode').value==='META';$('capture').textContent=meta?'ODBIJ METĘ':'ODBIJ START';$('capture').classList.toggle('meta',meta)}
 $('mode').addEventListener('change',updateMode);
-$('capture').addEventListener('click',function(){var now=new Date();var crew=$('crew').value.trim();if(!/^\d{1,4}$/.test(crew)){$('status').textContent='Wpisz numer załogi (1–4 cyfry).';$('crew').focus();return}var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,8),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL')};records.unshift(r);try{localStorage.setItem(storageKey,JSON.stringify(records))}catch(e){$('status').textContent='Pomiar zapisany w sesji, ale pamięć telefonu jest niedostępna.';render();return}$('status').textContent='✓ Odbito '+r.mode+' · #'+r.crew+' · '+r.time;if(navigator.vibrate)navigator.vibrate(40);render()});
-$('clear').addEventListener('click',function(){if(!confirm('Usunąć historię pomiarów demonstracyjnych?'))return;records=[];try{localStorage.removeItem(storageKey)}catch(e){}render();$('status').textContent='Historia demonstracyjna wyczyszczona.'});
-tick();setInterval(tick,30);updateMode();render();
+$('capture').addEventListener('click',function(){
+ var now=new Date();
+ var crew=$('crew').value.trim();
+ if(crew && !/^\\d{1,4}$/.test(crew)){$('status').textContent='Numer: 1–4 cyfry albo zostaw puste.';return}
+ var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),corrections:[]};
+ records.unshift(r);
+ var ok=persist();
+ if(ok)$('status').textContent='✓ Odbito '+r.mode+' · #'+(r.crew||'BRAK NR')+' · '+r.time;
+ if(navigator.vibrate)navigator.vibrate(40);
+ render();
+});
+$('export').addEventListener('click',async function(){
+ if(!records.length){alert('Nie ma jeszcze pomiarów do zapisania.');return}
+ var lines=['KJS CHRONO MOBILE v1.2 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: wersja demonstracyjna — bez wysyłki do Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID'];
+ records.slice().reverse().forEach(function(r){
+  lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||''].join(' | '));
+  (r.corrections||[]).forEach(function(c){lines.push('  KOREKTA NR: '+c.from+' -> '+c.to+' ('+c.at+')')});
+ });
+ var content=lines.join('\\r\\n')+'\\r\\n';
+ var blob=new Blob(['\\ufeff'+content],{type:'text/plain;charset=utf-8'});
+ var filename='KJS_CHRONO_'+new Date().toISOString().slice(0,10)+'.txt';
+ var file;
+ try{
+  file=new File([blob],filename,{type:'text/plain'});
+  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
+   await navigator.share({files:[file],title:'Pomiary KJS CHRONO'});
+   $('status').textContent='Otworzono udostępnianie pliku TXT.';
+   return;
+  }
+ }catch(e){if(e.name==='AbortError')return}
+ var url=URL.createObjectURL(blob);
+ var a=document.createElement('a');a.href=url;a.download=filename;
+ document.body.appendChild(a);a.click();a.remove();
+ setTimeout(function(){URL.revokeObjectURL(url)},10000);
+ $('status').textContent='Przygotowano plik TXT. Sprawdź Pobrane / Pliki.';
+});
+$('clear').addEventListener('click',function(){
+ if(!confirm('Usunąć lokalną historię? Najpierw zapisz TXT!'))return;
+ records=[];persist();render();$('status').textContent='Historia wyczyszczona.';
+});
+tick();setInterval(tick,40);updateMode();render();
 })();
 </script></body></html>
