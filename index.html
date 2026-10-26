@@ -4,32 +4,48 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827">
-<title>KJS CHRONO MOBILE v1.2 — DEMO</title>
+<title>KJS CHRONO MOBILE v1.4 — GOOGLE SHEETS</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;background:#0d1422;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}main{max-width:540px;margin:auto;padding:18px 0 35px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}.tag{font-size:11px;padding:7px 9px;border-radius:20px;background:#26354c;color:#d7e4f9}.panel{background:#172338;border:1px solid #31415b;border-radius:18px;padding:17px;margin-top:15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:#b6c5d9;display:block;margin-bottom:7px}select,input{width:100%;border:1px solid #425571;background:#0f1b2d;color:white;padding:14px 12px;border-radius:12px;font-size:20px}input{font-size:26px;font-weight:700;text-align:center}.clock{text-align:center;padding:22px 0 14px}.clock small{color:#b6c5d9}.clock strong{display:block;font-variant-numeric:tabular-nums;font-size:clamp(35px,9vw,52px);letter-spacing:1px;margin-top:8px}.clock p{font-size:12px;color:#a9c6de;margin:6px 0 0}.capture{width:100%;border:0;border-radius:18px;padding:27px 12px;font-size:27px;font-weight:900;background:#18a558;color:white;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.capture.meta{background:#e36c20}.capture:active{transform:scale(.985)}.status{min-height:26px;margin:13px 0 0;text-align:center;color:#b7f6d0;font-size:14px}.history-head{display:flex;align-items:center;justify-content:space-between}h2{font-size:17px;margin:0}button.small{background:#293a55;color:#fff;border:1px solid #49607f;padding:9px 12px;border-radius:9px}.entry{padding:12px 0;border-top:1px solid #31415b;display:flex;justify-content:space-between;gap:8px;align-items:center}.entry:first-child{border-top:0}.entry strong{font-size:17px}.entry span{color:#b7c9df;font-size:12px}.muted{color:#9eb1ca;font-size:13px;line-height:1.5}.warning{color:#ffcf8d;font-size:12px;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}.edit{margin-top:10px;padding:12px;background:#0f1b2d;border-radius:12px}.edit input{font-size:20px}.edit button{margin-top:9px}.entry{align-items:flex-start}.entry .small{margin-top:8px}.save{background:#116b45!important}.hint{font-size:12px;color:#b6c5d9;margin:7px 0 0}
-</style>
+.queueinfo{font-size:14px;color:#e7f0ff;line-height:1.6}.queueinfo strong{color:#ffcf8d}.delivery{display:block;color:#ffcf8d;margin-top:5px;font-size:12px}</style>
 </head>
 <body><main>
-<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.2.3 · DEMO</span></div>
+<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.4 · GOOGLE SHEETS</span></div>
 <section class="panel"><div class="grid"><div><label for="os">ODCINEK</label><select id="os"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
 <div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
 <label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"><p class="hint">Możesz odbić czas bez numeru i uzupełnić go później w historii.</p></section>
 <section class="panel"><button class="capture" id="capture" type="button">ODBIJ START</button><div class="status" id="status" role="status">Gotowy do pomiaru</div></section>
+<section class="panel"><h2>KOLEJKA WYSYŁKOWA</h2><div class="queueinfo" id="queueinfo" role="status" style="margin-top:10px">Sprawdzanie kolejki…</div><p class="hint">Wysyłka automatyczna do Google Sheets. Ze względu na ograniczenia odpowiedzi Google nie można potwierdzić zapisu z poziomu przeglądarki — sprawdzaj arkusz. Nie kasuj kolejki bez weryfikacji.</p></section>
 <section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><div class="actions"><button type="button" class="small save" id="export">ZAPISZ TXT</button><button type="button" class="small" id="clear">Wyczyść demo</button></div></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
-<p class="warning">⚠️ Wersja demonstracyjna. Nic nie jest wysyłane do arkusza Google. Pomiar ręczny i zegary różnych urządzeń wymagają osobnej weryfikacji przed rajdem.</p>
+<p class="warning">⚠️ Żądanie wysyłki ≠ potwierdzony zapis w arkuszu. Sprawdź arkusz przed rajdem. Zegary urządzeń wymagają synchronizacji.</p>
 </main><script>
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id)};
-var storageKey='kjs_mobile_demo_v1';
+var storageKey='kjs_mobile_demo_v1'; // Zachowujemy dane z wersji 1.2.3
+var settingsKey='kjs_mobile_station_settings_v1';
+var GOOGLE_SHEETS_URL='https://script.google.com/macros/s/AKfycbxwbRPdy_GlFdqOyzvFcEx1z5d4w3pmyqbTAsYglZlOV01290lMHCX8lKjwMIYYzPh8Lw/exec';
+var sending=false;
+function normalizeRecord(r){if(!Number.isInteger(r.wersja)||r.wersja<1){r.wersja=1;r.delivery='verify';r.legacy=true}if(r.delivery==='confirmed')r.delivery='verify';return r}
+function saveSettings(){try{localStorage.setItem(settingsKey,JSON.stringify({os:$('os').value,mode:$('mode').value}))}catch(e){}}
+function restoreSettings(){try{var s=JSON.parse(localStorage.getItem(settingsKey)||'null');if(s){if(['OS1','OS2','OS3','OS4','OS5','OS6'].includes(s.os))$('os').value=s.os;if(['START','META'].includes(s.mode))$('mode').value=s.mode}}catch(e){}}
 var records=[];
-try{records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}
+try{records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray(records))records=[];records.forEach(normalizeRecord)}catch(e){records=[]}
 function two(n){return String(n).padStart(2,'0')}
 function time(d){return two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds())+','+two(Math.floor(d.getMilliseconds()/10))}
 function tick(){$('clock').textContent=time(new Date())}
 function persist(){try{localStorage.setItem(storageKey,JSON.stringify(records));return true}catch(e){$('status').textContent='UWAGA: Nie udało się zapisać w pamięci. Wyeksportuj TXT!';return false}}
 function element(tag,cls,value){var x=document.createElement(tag);if(cls)x.className=cls;if(value!==undefined)x.textContent=value;return x}
-function render(){
+function queueStatus(r){return r.delivery==='verify'?'Wysłano żądanie — sprawdź arkusz':r.delivery==='sending'?'Wysyłanie…':'Oczekuje na wysyłkę'}
+ function renderQueue(){
+  var pending=records.filter(function(r){return r.delivery!=='verify'}).length;
+  $('queueinfo').innerHTML='';
+  var line=element('div','', 'Zapisane lokalnie: '+records.length+' · W kolejce: '+pending);
+  var note=element('strong','', navigator.onLine?'Internet: dostępny · odpowiedź serwera niezweryfikowana':'Internet: brak · oczekiwanie');
+  $('queueinfo').appendChild(line);$('queueinfo').appendChild(note);
+ }
+ function render(){
+  renderQueue();
  var box=$('history');box.textContent='';
  if(!records.length){box.textContent='Brak pomiarów.';return}
  records.forEach(function(r){
@@ -37,6 +53,7 @@ function render(){
   var left=element('div');
   var title=element('strong','', '#'+(r.crew||'BRAK NR')+' · '+r.mode+' · '+r.os);
   var info=element('div','muted',r.date);
+   var delivery=element('span','delivery',queueStatus(r));left.appendChild(delivery);
   var stamp=element('div','',r.time);
   stamp.style.fontWeight='700';
   var editBtn=element('button','small','Edytuj nr');
@@ -56,8 +73,9 @@ function render(){
    var previous=r.crew||'BRAK NR';
    if(!Array.isArray(r.corrections))r.corrections=[];
    if(previous!==(v||'BRAK NR'))r.corrections.push({from:previous,to:v||'BRAK NR',at:new Date().toISOString()});
+   if(previous!==(v||'BRAK NR')){r.wersja=(r.wersja||1)+1;if(!r.legacy)r.delivery='pending'}
    r.crew=v;
-   persist();$('status').textContent='✓ Poprawiono numer. Oryginalny czas nie został zmieniony.';
+   persist();scheduleSync();$('status').textContent='✓ Poprawiono numer. Oryginalny czas nie został zmieniony.';
    render();
   });
   editArea.appendChild(lbl);editArea.appendChild(inp);editArea.appendChild(saveBtn);editArea.appendChild(cancelBtn);
@@ -67,24 +85,26 @@ function render(){
  });
 }
 function updateMode(){var meta=$('mode').value==='META';$('capture').textContent=meta?'ODBIJ METĘ':'ODBIJ START';$('capture').classList.toggle('meta',meta)}
-$('mode').addEventListener('change',updateMode);
+$('mode').addEventListener('change',function(){updateMode();saveSettings()});
+$('os').addEventListener('change',saveSettings);
 $('capture').addEventListener('click',function(){
  var now=new Date();
  var crew=$('crew').value.trim();
  if(crew && !/^\d{1,4}$/.test(crew)){$('status').textContent='Numer: 1–4 cyfry albo zostaw puste.';return}
- var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),corrections:[]};
+ var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),delivery:'pending',wersja:1,corrections:[]};
  records.unshift(r);
  var ok=persist();
  if(ok)$('status').textContent='✓ Odbito '+r.mode+' · #'+(r.crew||'BRAK NR')+' · '+r.time;
  if(ok)$('crew').value='';
+ if(ok)scheduleSync();
  if(navigator.vibrate)navigator.vibrate(40);
  render();
 });
 $('export').addEventListener('click',async function(){
  if(!records.length){alert('Nie ma jeszcze pomiarów do zapisania.');return}
- var lines=['KJS CHRONO MOBILE v1.2.3 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: wersja demonstracyjna — bez wysyłki do Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID'];
+ var lines=['KJS CHRONO MOBILE v1.3 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: status wysłano nie oznacza potwierdzenia zapisu w Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID | STATUS'];
  records.slice().reverse().forEach(function(r){
-  lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||''].join(' | '));
+  lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||'',queueStatus(r)].join(' | '));
   (r.corrections||[]).forEach(function(c){lines.push('  KOREKTA NR: '+c.from+' -> '+c.to+' ('+c.at+')')});
  });
  var content=lines.join('\r\n')+'\r\n';
@@ -106,9 +126,31 @@ $('export').addEventListener('click',async function(){
  $('status').textContent='Przygotowano plik TXT. Sprawdź Pobrane / Pliki.';
 });
 $('clear').addEventListener('click',function(){
- if(!confirm('Usunąć lokalną historię? Najpierw zapisz TXT!'))return;
+ if(!confirm('UWAGA: usuniesz także WSZYSTKIE pomiary oczekujące na wysyłkę! Najpierw zapisz TXT. Czy na pewno kontynuować?'))return;
  records=[];persist();render();$('status').textContent='Historia wyczyszczona.';
 });
-tick();setInterval(tick,40);updateMode();render();
+var syncTimer=null;
+function scheduleSync(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(sendPending,200)}
+async function sendPending(){
+ if(sending||!navigator.onLine)return;
+ sending=true;
+ try{
+  var pending=records.filter(function(r){return r.delivery==='pending'||r.delivery==='sending'});
+  for(var i=0;i<pending.length;i++){
+   var r=pending[i], version=r.wersja||1;
+   var payload={id:String(r.id),nr_startowy:r.crew||'',rodzaj_pomiaru:r.mode,odcinek:r.os,timestamp:r.time,data_iso:r.iso,wersja:version};
+   r.delivery='sending';persist();render();
+   try{
+    await fetch(GOOGLE_SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    // Opaque response: nie jest dowodem zapisu do Sheets.
+    if(r.wersja===version)r.delivery='verify';
+   }catch(e){if(r.wersja===version)r.delivery='pending';break}
+   persist();render();
+  }
+ }finally{sending=false;render()}
+}
+window.addEventListener('online',scheduleSync);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)scheduleSync()});
+restoreSettings();tick();setInterval(tick,40);updateMode();render();scheduleSync();
 })();
 </script></body></html>
