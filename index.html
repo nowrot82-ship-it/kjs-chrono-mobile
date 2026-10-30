@@ -1,156 +1,147 @@
 <!doctype html>
-<html lang="pl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101827">
-<title>KJS CHRONO MOBILE v1.4 — GOOGLE SHEETS</title>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101010"><title>AKR START TIMER v6 · GOOGLE SHEETS</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;background:#0d1422;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}main{max-width:540px;margin:auto;padding:18px 0 35px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}.tag{font-size:11px;padding:7px 9px;border-radius:20px;background:#26354c;color:#d7e4f9}.panel{background:#172338;border:1px solid #31415b;border-radius:18px;padding:17px;margin-top:15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:#b6c5d9;display:block;margin-bottom:7px}select,input{width:100%;border:1px solid #425571;background:#0f1b2d;color:white;padding:14px 12px;border-radius:12px;font-size:20px}input{font-size:26px;font-weight:700;text-align:center}.clock{text-align:center;padding:22px 0 14px}.clock small{color:#b6c5d9}.clock strong{display:block;font-variant-numeric:tabular-nums;font-size:clamp(35px,9vw,52px);letter-spacing:1px;margin-top:8px}.clock p{font-size:12px;color:#a9c6de;margin:6px 0 0}.capture{width:100%;border:0;border-radius:18px;padding:27px 12px;font-size:27px;font-weight:900;background:#18a558;color:white;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.capture.meta{background:#e36c20}.capture:active{transform:scale(.985)}.status{min-height:26px;margin:13px 0 0;text-align:center;color:#b7f6d0;font-size:14px}.history-head{display:flex;align-items:center;justify-content:space-between}h2{font-size:17px;margin:0}button.small{background:#293a55;color:#fff;border:1px solid #49607f;padding:9px 12px;border-radius:9px}.entry{padding:12px 0;border-top:1px solid #31415b;display:flex;justify-content:space-between;gap:8px;align-items:center}.entry:first-child{border-top:0}.entry strong{font-size:17px}.entry span{color:#b7c9df;font-size:12px}.muted{color:#9eb1ca;font-size:13px;line-height:1.5}.warning{color:#ffcf8d;font-size:12px;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}.edit{margin-top:10px;padding:12px;background:#0f1b2d;border-radius:12px}.edit input{font-size:20px}.edit button{margin-top:9px}.entry{align-items:flex-start}.entry .small{margin-top:8px}.save{background:#116b45!important}.hint{font-size:12px;color:#b6c5d9;margin:7px 0 0}
-.queueinfo{font-size:14px;color:#e7f0ff;line-height:1.6}.queueinfo strong{color:#ffcf8d}.delivery{display:block;color:#ffcf8d;margin-top:5px;font-size:12px}</style>
-</head>
-<body><main>
-<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.4 · GOOGLE SHEETS</span></div>
-<section class="panel"><div class="grid"><div><label for="os">ODCINEK</label><select id="os"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
-<div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
-<label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"><p class="hint">Możesz odbić czas bez numeru i uzupełnić go później w historii.</p></section>
-<section class="panel"><button class="capture" id="capture" type="button">ODBIJ START</button><div class="status" id="status" role="status">Gotowy do pomiaru</div></section>
-<section class="panel"><h2>KOLEJKA WYSYŁKOWA</h2><div class="queueinfo" id="queueinfo" role="status" style="margin-top:10px">Sprawdzanie kolejki…</div><p class="hint">Wysyłka automatyczna do Google Sheets. Ze względu na ograniczenia odpowiedzi Google nie można potwierdzić zapisu z poziomu przeglądarki — sprawdzaj arkusz. Nie kasuj kolejki bez weryfikacji.</p></section>
-<section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><div class="actions"><button type="button" class="small save" id="export">ZAPISZ TXT</button><button type="button" class="small" id="clear">Wyczyść demo</button></div></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
-<p class="warning">⚠️ Żądanie wysyłki ≠ potwierdzony zapis w arkuszu. Sprawdź arkusz przed rajdem. Zegary urządzeń wymagają synchronizacji.</p>
-</main><script>
-(function(){
-'use strict';
-var $=function(id){return document.getElementById(id)};
-var storageKey='kjs_mobile_demo_v1'; // Zachowujemy dane z wersji 1.2.3
-var settingsKey='kjs_mobile_station_settings_v1';
-var GOOGLE_SHEETS_URL='https://script.google.com/macros/s/AKfycbxwbRPdy_GlFdqOyzvFcEx1z5d4w3pmyqbTAsYglZlOV01290lMHCX8lKjwMIYYzPh8Lw/exec';
-var sending=false;
-function normalizeRecord(r){if(!Number.isInteger(r.wersja)||r.wersja<1){r.wersja=1;r.delivery='verify';r.legacy=true}if(r.delivery==='confirmed')r.delivery='verify';return r}
-function saveSettings(){try{localStorage.setItem(settingsKey,JSON.stringify({os:$('os').value,mode:$('mode').value}))}catch(e){}}
-function restoreSettings(){try{var s=JSON.parse(localStorage.getItem(settingsKey)||'null');if(s){if(['OS1','OS2','OS3','OS4','OS5','OS6'].includes(s.os))$('os').value=s.os;if(['START','META'].includes(s.mode))$('mode').value=s.mode}}catch(e){}}
-var records=[];
-try{records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray(records))records=[];records.forEach(normalizeRecord)}catch(e){records=[]}
-function two(n){return String(n).padStart(2,'0')}
-function time(d){return two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds())+','+two(Math.floor(d.getMilliseconds()/10))}
-function tick(){$('clock').textContent=time(new Date())}
-function persist(){try{localStorage.setItem(storageKey,JSON.stringify(records));return true}catch(e){$('status').textContent='UWAGA: Nie udało się zapisać w pamięci. Wyeksportuj TXT!';return false}}
-function element(tag,cls,value){var x=document.createElement(tag);if(cls)x.className=cls;if(value!==undefined)x.textContent=value;return x}
-function queueStatus(r){return r.delivery==='verify'?'Wysłano żądanie — sprawdź arkusz':r.delivery==='sending'?'Wysyłanie…':'Oczekuje na wysyłkę'}
- function renderQueue(){
-  var pending=records.filter(function(r){return r.delivery!=='verify'}).length;
-  $('queueinfo').innerHTML='';
-  var line=element('div','', 'Zapisane lokalnie: '+records.length+' · W kolejce: '+pending);
-  var note=element('strong','', navigator.onLine?'Internet: dostępny · odpowiedź serwera niezweryfikowana':'Internet: brak · oczekiwanie');
-  $('queueinfo').appendChild(line);$('queueinfo').appendChild(note);
- }
- function render(){
-  renderQueue();
- var box=$('history');box.textContent='';
- if(!records.length){box.textContent='Brak pomiarów.';return}
- records.forEach(function(r){
-  var div=element('div','entry');
-  var left=element('div');
-  var title=element('strong','', '#'+(r.crew||'BRAK NR')+' · '+r.mode+' · '+r.os);
-  var info=element('div','muted',r.date);
-   var delivery=element('span','delivery',queueStatus(r));left.appendChild(delivery);
-  var stamp=element('div','',r.time);
-  stamp.style.fontWeight='700';
-  var editBtn=element('button','small','Edytuj nr');
-  editBtn.type='button';
-  var editArea=element('div','edit');
-  editArea.hidden=true;
-  var lbl=element('label','', 'Numer załogi (puste = brak numeru)');
-  var inp=element('input');
-  inp.type='text';inp.inputMode='numeric';inp.value=r.crew||'';inp.maxLength=4;
-  var saveBtn=element('button','small save','Zapisz poprawkę');saveBtn.type='button';
-  var cancelBtn=element('button','small','Anuluj');cancelBtn.type='button';
-  editBtn.addEventListener('click',function(){editArea.hidden=!editArea.hidden;if(!editArea.hidden)inp.focus()});
-  cancelBtn.addEventListener('click',function(){editArea.hidden=true;inp.value=r.crew||''});
-  saveBtn.addEventListener('click',function(){
-   var v=inp.value.trim();
-   if(v && !/^\d{1,4}$/.test(v)){alert('Numer musi mieć od 1 do 4 cyfr.');return}
-   var previous=r.crew||'BRAK NR';
-   if(!Array.isArray(r.corrections))r.corrections=[];
-   if(previous!==(v||'BRAK NR'))r.corrections.push({from:previous,to:v||'BRAK NR',at:new Date().toISOString()});
-   if(previous!==(v||'BRAK NR')){r.wersja=(r.wersja||1)+1;if(!r.legacy)r.delivery='pending'}
-   r.crew=v;
-   persist();scheduleSync();$('status').textContent='✓ Poprawiono numer. Oryginalny czas nie został zmieniony.';
-   render();
-  });
-  editArea.appendChild(lbl);editArea.appendChild(inp);editArea.appendChild(saveBtn);editArea.appendChild(cancelBtn);
-  left.appendChild(title);left.appendChild(info);left.appendChild(editBtn);left.appendChild(editArea);
-  var right=element('span','',r.time);
-  div.appendChild(left);div.appendChild(right);box.appendChild(div);
- });
+:root{font-family:Arial,Helvetica,sans-serif;color:white;background:#0b0b0b}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}.app{height:100dvh;display:flex;flex-direction:column;gap:7px;padding:8px;max-width:1800px;margin:auto}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:26px}.brand{font-size:clamp(14px,2vw,23px);font-weight:1000;font-style:italic}.brand b{color:#ff4545}.oslabel{font-weight:900;font-size:clamp(15px,2.2vw,25px);color:#ffe09a}.stage{min-height:0;flex:1;display:flex}.panel{width:100%;height:100%;border-radius:18px;border:2px solid #f22;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(ellipse,#e0000a 0%,#ae0000 60%,#710000 100%)}.panel.green{border-color:#19e34b;background:radial-gradient(ellipse,#0bce2b,#008c1d 60%,#00480d)}.panel.halted{background:#940000;border:5px solid #fff}.digits{font-weight:1000;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1;letter-spacing:-.055em;text-align:center;font-size:min(72vh,72vw)}.digits.time{font-size:min(34vh,17vw)}.digits.go{font-size:min(78vh,65vw)}.digits.stop{font-size:min(24vh,16vw);letter-spacing:-.035em;white-space:normal;line-height:1.05;padding:10px}.controls{display:grid;grid-template-columns:175px 105px minmax(125px,1fr) minmax(100px,.75fr) minmax(140px,1fr);gap:7px}.controls>*{min-width:0;height:clamp(48px,10vh,76px);border:0;border-radius:10px;font-weight:900;font-size:clamp(15px,2.2vw,24px)}.controls select{font-size:clamp(13px,1.6vw,19px);padding:0 6px}.controls input{font-size:clamp(13px,1.7vw,20px)}.controls select,.controls input{background:#242424;border:2px solid #777;color:white;padding:0 10px}.start{background:#f2333c;color:white}.historybtn{background:#3b3b3b;color:white}.emergency{background:#fff000;color:#171000;border:3px solid #111}.foot{display:flex;justify-content:space-between;gap:10px;font-size:clamp(10px,1.2vw,14px);color:#bbb}.app.running{padding:0;gap:0;max-width:none}.app.running .top,.app.running .foot,.app.running .controls{display:none}.app.running .stage{flex:1;min-height:0}.app.running .panel{border:0;border-radius:0}.app.running .digits{font-size:min(78vh,78vw)}.app.running .digits.go{font-size:min(78vh,66vw)}.stopFloat{display:none;position:fixed;z-index:10;bottom:max(12px,env(safe-area-inset-bottom));right:max(12px,env(safe-area-inset-right));background:#fff000;color:#161000;border:4px solid #161000;border-radius:16px;padding:12px 22px;font-size:clamp(20px,3.5vw,34px);font-weight:1000;box-shadow:0 0 0 2px white}.app.running .stopFloat{display:block}.app.running .panel{padding-bottom:3vh}.app.stopped{padding:0;gap:0;max-width:none}.app.stopped .top,.app.stopped .controls,.app.stopped .foot,.app.stopped .stopFloat{display:none!important}.app.stopped .stage{flex:1}.app.stopped .panel{border-radius:0}.haltOverlay{display:none;position:fixed;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:12;gap:10px;align-items:center;flex-direction:column;width:min(94vw,550px)}.app.stopped .haltOverlay{display:flex}.haltOverlay .note{font-size:clamp(13px,2vw,19px);font-weight:bold;text-align:center;background:#1c0000cc;padding:8px 12px;border-radius:8px}.resume{background:white;color:#920000;border:3px solid #fff;border-radius:12px;padding:12px 24px;font-size:clamp(18px,2.7vw,27px);font-weight:1000;width:100%}.history{display:none;position:fixed;z-index:20;inset:5%;background:#1c1c1c;border:2px solid #777;border-radius:14px;padding:18px;overflow:auto;box-shadow:0 0 0 100vmax #000b}.history.open{display:block}.history h2{margin:0 0 12px}.history table{width:100%;border-collapse:collapse;font-size:14px}.history td,.history th{padding:9px;text-align:left;border-bottom:1px solid #444}.history button{background:#444;color:white;border:0;border-radius:9px;padding:12px;margin:12px 7px 0 0;font-weight:bold}.warning{color:#ffd15d;font-size:13px;margin:8px 0}.status{color:#ffe09a}@media(max-width:850px) and (orientation:landscape){.controls{grid-template-columns:145px 85px minmax(105px,1fr) minmax(85px,.75fr) minmax(115px,1fr);gap:4px}.controls>*{font-size:clamp(12px,2vw,17px)}.controls select{font-size:13px;padding:0 3px}.controls input{padding:0 5px;font-size:14px}.emergency{font-size:13px!important}}@media(orientation:portrait){.controls{grid-template-columns:1fr 1fr}.controls select{grid-column:1}.controls input{grid-column:2}.controls .emergency{grid-column:1/-1}.digits.time{font-size:min(22vh,16vw)}.app.running .digits{font-size:min(75vw,60vh)}.app.running .digits.go{font-size:min(68vw,45vh)}.digits.stop{font-size:min(17vw,14vh)}}@media(max-height:440px) and (orientation:landscape){.app{gap:4px;padding:5px}.top{min-height:19px}.brand,.oslabel{font-size:14px}.controls>*{height:42px;font-size:15px}.foot{font-size:10px}.digits.time{font-size:min(35vh,17vw)}.app.running .digits{font-size:min(74vh,74vw)}.app.stopped .digits.stop{font-size:min(21vh,15vw)}.haltOverlay .note{font-size:12px}.resume{font-size:17px;padding:8px}}
+</style></head><body>
+<main class="app" id="app"><header class="top"><div class="brand">AKR <b>START</b> TIMER <small style="font-size:.55em;color:#bbb">v6</small></div><div class="oslabel" id="osLabel">WYBIERZ OS</div></header>
+<section class="stage"><div class="panel" id="panel"><div class="digits time" id="display">--:--:--</div></div></section>
+<section class="controls"><select id="os" aria-label="Odcinek specjalny"><option value="">WYBIERZ OS</option><option value="OS1">OS1</option><option value="OS2">OS2</option><option value="OS3">OS3</option><option value="OS4">OS4</option><option value="OS5">OS5</option><option value="OS6">OS6</option></select><input id="crew" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="NR ZAŁ." aria-label="Numer załogi"><button class="start" id="start">START · 30 s</button><button class="historybtn" id="historyToggle">HISTORIA</button><button class="emergency" id="stopIdle">🛑 STOP OS</button></section>
+<div class="foot"><span class="status" id="status">Gotowy · zapis lokalny + synchronizacja Sheets</span><span id="count">Starty: 0</span></div>
+<button class="stopFloat" id="stopRunning">🛑 STOP OS</button><div class="haltOverlay"><div class="note" id="haltNote">STARTY WSTRZYMANE · brak zgody na start</div><button class="resume" id="resume">🔒 WZNÓW STARTY</button></div>
+<section class="history" id="history"><h2>Historia lokalna · AKR START TIMER</h2><div class="warning">Starty zapisują się lokalnie. Próba wysłania nie jest potwierdzeniem zapisu w arkuszu (Google no-cors). Sprawdzaj Pomiary_Chrono. STOP OS jest zapisywany wyłącznie lokalnie.</div><table><thead><tr><th>OS</th><th>Załoga</th><th>Data</th><th>Godzina startu</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table><button id="export">Eksport CSV</button><button id="retry">Ponów oczekujące</button><button id="clear">Usuń historię</button><button id="close">Zamknij</button></section></main>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const KEY='akr_start_timer_v5_records',OSKEY='akr_start_timer_v5_os',HALTKEY='akr_start_timer_v5_halted';
+const URL='https://script.google.com/macros/s/AKfycbxwbRPdy_GlFdqOyzvFcEx1z5d4w3pmyqbTAsYglZlOV01290lMHCX8lKjwMIYYzPh8Lw/exec';
+const allowed=['OS1','OS2','OS3','OS4','OS5','OS6'];
+const pad=(n,l=2)=>String(n).padStart(l,'0');
+const fmt=d=>`${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const precise=d=>`${fmt(d)}.${pad(d.getMilliseconds(),3)}`;
+const chronoTime=d=>`${fmt(d)},${pad(Math.floor(d.getMilliseconds()/10))}`;
+let mode='idle',deadline=0,greenUntil=0,epoch=0,number='',activeOS='',saved=false,sending=false,syncTimer=null;
+function read(){try{const x=JSON.parse(localStorage.getItem(KEY));return Array.isArray(x)?x:[]}catch{return []}}
+function write(x){try{localStorage.setItem(KEY,JSON.stringify(x));return true}catch{return false}}
+function status(message){$('status').textContent=message}
+function record(type,ts,crew,os){
+ const d=new Date(ts),r={id:`AKRST-${ts}-${Math.random().toString(36).slice(2,12)}`,os,crew,
+ date:`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`,time:precise(d),
+ timestamp:d.toISOString(),type,sync:type==='START'?'pending':'local',wersja:1};
+ const a=read();a.push(r);const ok=write(a);history();
+ status(ok?`${type==='START'?'Zapisano START':'Zapisano STOP'} · ${os} · ${r.time} · lokalnie`:'BŁĄD ZAPISU! Zapisz dane ręcznie!');
+ if(ok&&type==='START')scheduleSync();return ok;
 }
-function updateMode(){var meta=$('mode').value==='META';$('capture').textContent=meta?'ODBIJ METĘ':'ODBIJ START';$('capture').classList.toggle('meta',meta)}
-$('mode').addEventListener('change',function(){updateMode();saveSettings()});
-$('os').addEventListener('change',saveSettings);
-$('capture').addEventListener('click',function(){
- var now=new Date();
- var crew=$('crew').value.trim();
- if(crew && !/^\d{1,4}$/.test(crew)){$('status').textContent='Numer: 1–4 cyfry albo zostaw puste.';return}
- var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),delivery:'pending',wersja:1,corrections:[]};
- records.unshift(r);
- var ok=persist();
- if(ok)$('status').textContent='✓ Odbito '+r.mode+' · #'+(r.crew||'BRAK NR')+' · '+r.time;
- if(ok)$('crew').value='';
- if(ok)scheduleSync();
- if(navigator.vibrate)navigator.vibrate(40);
- render();
-});
-$('export').addEventListener('click',async function(){
- if(!records.length){alert('Nie ma jeszcze pomiarów do zapisania.');return}
- var lines=['KJS CHRONO MOBILE v1.3 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: status wysłano nie oznacza potwierdzenia zapisu w Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID | STATUS'];
- records.slice().reverse().forEach(function(r){
-  lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||'',queueStatus(r)].join(' | '));
-  (r.corrections||[]).forEach(function(c){lines.push('  KOREKTA NR: '+c.from+' -> '+c.to+' ('+c.at+')')});
- });
- var content=lines.join('\r\n')+'\r\n';
- var blob=new Blob(['\ufeff'+content],{type:'text/plain;charset=utf-8'});
- var filename='KJS_CHRONO_'+new Date().toISOString().slice(0,10)+'.txt';
- var file;
- try{
-  file=new File([blob],filename,{type:'text/plain'});
-  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
-   await navigator.share({files:[file],title:'Pomiary KJS CHRONO'});
-   $('status').textContent='Otworzono udostępnianie pliku TXT.';
-   return;
+function syncLabel(r){if(r.type!=='START')return 'STOP OS · lokalnie';if(r.sync==='verify')return 'Żądanie wysłane · sprawdź arkusz';if(r.sync==='sending')return 'Wysyłanie…';return 'Oczekuje na wysyłkę'}
+function history(){
+ const a=read(),starts=a.filter(r=>r.type==='START'),pending=starts.filter(r=>r.sync!=='verify');
+ $('count').textContent=`Starty: ${starts.length} · Kolejka: ${pending.length} · STOP: ${a.length-starts.length}`;
+ $('rows').replaceChildren();
+ for(const r of a.slice().reverse()){
+  const tr=document.createElement('tr');
+  for(const v of [r.os,r.crew||'—',r.date,r.time,syncLabel(r)]){
+   const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
   }
- }catch(e){if(e.name==='AbortError')return}
- var url=URL.createObjectURL(blob);
- var a=document.createElement('a');a.href=url;a.download=filename;
- document.body.appendChild(a);a.click();a.remove();
- setTimeout(function(){URL.revokeObjectURL(url)},10000);
- $('status').textContent='Przygotowano plik TXT. Sprawdź Pobrane / Pliki.';
-});
-$('clear').addEventListener('click',function(){
- if(!confirm('UWAGA: usuniesz także WSZYSTKIE pomiary oczekujące na wysyłkę! Najpierw zapisz TXT. Czy na pewno kontynuować?'))return;
- records=[];persist();render();$('status').textContent='Historia wyczyszczona.';
-});
-var syncTimer=null;
-function scheduleSync(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(sendPending,200)}
+  $('rows').appendChild(tr);
+ }
+}
+function updateRecord(id,patch){const a=read(),r=a.find(x=>x.id===id);if(!r)return false;Object.assign(r,patch);return write(a)}
+function scheduleSync(delay=400){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(sendPending,delay)}
 async function sendPending(){
  if(sending||!navigator.onLine)return;
  sending=true;
  try{
-  var pending=records.filter(function(r){return r.delivery==='pending'||r.delivery==='sending'});
-  for(var i=0;i<pending.length;i++){
-   var r=pending[i], version=r.wersja||1;
-   var payload={id:String(r.id),nr_startowy:r.crew||'',rodzaj_pomiaru:r.mode,odcinek:r.os,timestamp:r.time,data_iso:r.iso,wersja:version};
-   r.delivery='sending';persist();render();
+  // 'verify' oznacza tylko wysłane żądanie; nie ponawiamy automatycznie,
+  // aby nie wywoływać niepotrzebnych dubli. ID chroni przed duplikacją na serwerze.
+  const todo=read().filter(r=>r.type==='START'&&(r.sync==='pending'||r.sync==='sending'));
+  for(const r of todo){
+   if(!navigator.onLine)break;
+   const d=new Date(r.timestamp);
+   if(isNaN(d.getTime())||!allowed.includes(r.os)||!/^[0-9]{1,4}$/.test(r.crew||'')){
+    status('Błąd danych w kolejce — sprawdź historię');continue;
+   }
+   const payload={id:String(r.id),nr_startowy:String(r.crew),rodzaj_pomiaru:'START',odcinek:r.os,
+     timestamp:chronoTime(d),data_iso:r.timestamp,wersja:r.wersja||1};
+   if(!updateRecord(r.id,{sync:'sending'})){status('BŁĄD pamięci — wysyłka wstrzymana');break}
+   history();
    try{
-    await fetch(GOOGLE_SHEETS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
-    // Opaque response: nie jest dowodem zapisu do Sheets.
-    if(r.wersja===version)r.delivery='verify';
-   }catch(e){if(r.wersja===version)r.delivery='pending';break}
-   persist();render();
+    await fetch(URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    // Odpowiedź no-cors jest nieprzejrzysta: NIE potwierdza zapisu w arkuszu.
+    if(!updateRecord(r.id,{sync:'verify'})){status('BŁĄD pamięci po wysyłce');break}
+    status('Wysłano żądanie START · sprawdź arkusz Pomiary_Chrono');
+   }catch(e){updateRecord(r.id,{sync:'pending'});status('Brak połączenia · START zapisany lokalnie');break}
+   history();
   }
- }finally{sending=false;render()}
+ }finally{sending=false;history()}
 }
-window.addEventListener('online',scheduleSync);
-document.addEventListener('visibilitychange',function(){if(!document.hidden)scheduleSync()});
-restoreSettings();tick();setInterval(tick,40);updateMode();render();scheduleSync();
+function reset(){
+ mode='idle';$('app').className='app';$('panel').className='panel';$('display').className='digits time';
+ $('display').textContent=fmt(new Date());$('crew').value='';$('os').disabled=false;
+ $('start').disabled=false;$('historyToggle').disabled=false;$('osLabel').textContent=$('os').value||'WYBIERZ OS';
+}
+function halt(){
+ if(mode==='stopped')return;
+ const wasRunning=mode==='countdown';const stopOS=wasRunning||mode==='green'?activeOS:$('os').value;
+ const stopCrew=wasRunning?number:'';
+ mode='stopped';$('history').classList.remove('open');$('app').className='app stopped';
+ $('panel').className='panel halted';$('display').className='digits stop';$('display').textContent=`STOP ${stopOS||'OS'}`;
+ $('haltNote').textContent=`STARTY WSTRZYMANE ${stopOS?'· '+stopOS:''}${wasRunning?' · anulowano odliczanie załogi '+stopCrew:''}`;
+ try{localStorage.setItem(HALTKEY,'1')}catch{}
+ record('STOP',Date.now(),stopCrew,stopOS||'BRAK OS');
+}
+function tick(){
+ const now=performance.now();
+ if(mode==='idle'){$('display').textContent=fmt(new Date());return}
+ if(mode==='countdown'&&now>=deadline){
+  mode='green';
+  if(!saved){saved=true;record('START',epoch,number,activeOS)}
+  $('panel').classList.add('green');$('display').className='digits go';$('display').textContent='GO!';
+ }else if(mode==='countdown'){$('display').textContent=String(Math.ceil((deadline-now)/1000))}
+ if(mode==='green'&&now>=greenUntil)reset();
+}
+$('os').addEventListener('change',()=>{const v=$('os').value;$('osLabel').textContent=v||'WYBIERZ OS';try{localStorage.setItem(OSKEY,v)}catch{}});
+$('start').addEventListener('click',()=>{
+ if(mode!=='idle')return;const os=$('os').value,nr=$('crew').value.trim();
+ if(!allowed.includes(os)){alert('Najpierw wybierz OS1–OS6.');return}
+ if(!/^\d{1,4}$/.test(nr)){alert('Wpisz numer załogi (1–4 cyfry).');return}
+ // Zablokuj start, jeśli lokalna pamięć jest niedostępna.
+ try{const test='akr_start_storage_test';localStorage.setItem(test,'1');localStorage.removeItem(test)}catch{alert('Pamięć urządzenia niedostępna! Nie rozpoczynaj startu.');return}
+ activeOS=os;number=nr;saved=false;const p=performance.now();deadline=p+30000;
+ greenUntil=deadline+3000;epoch=Date.now()+30000;mode='countdown';
+ $('history').classList.remove('open');$('app').className='app running';$('panel').className='panel';
+ $('display').className='digits';$('display').textContent='30';$('os').disabled=true;
+ $('start').disabled=true;$('historyToggle').disabled=true;tick();
+});
+$('stopIdle').addEventListener('click',halt);$('stopRunning').addEventListener('click',halt);
+$('resume').addEventListener('click',()=>{
+ if(mode!=='stopped')return;
+ if(!confirm('Czy kierownictwo rajdu wyraziło zgodę na wznowienie startów na tym OS?'))return;
+ try{localStorage.removeItem(HALTKEY)}catch{}
+ reset();status('Starty wznowione · gotowy');
+});
+$('historyToggle').addEventListener('click',()=>{if(mode!=='idle')return;history();$('history').classList.toggle('open')});
+$('close').addEventListener('click',()=>$('history').classList.remove('open'));
+$('retry').addEventListener('click',()=>{scheduleSync(0);status('Ponawiam rekordy oczekujące…')});
+$('export').addEventListener('click',()=>{
+ const a=read(),lines=['﻿OS;Numer załogi;Data;Godzina;ISO;Zdarzenie;ID;Status'];
+ for(const r of a)lines.push([r.os,r.crew,r.date,r.time,r.timestamp,r.type,r.id,syncLabel(r)].join(';'));
+ const url=URL.createObjectURL(new Blob([lines.join('\r\n')],{type:'text/csv;charset=utf-8'})),link=document.createElement('a');
+ link.href=url;link.download='akr-start-timer-v6-historia.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
+});
+$('clear').addEventListener('click',()=>{
+ if(!confirm('UWAGA! Usuniesz także starty, które mogły NIE dotrzeć do arkusza. Najpierw wyeksportuj CSV i sprawdź Pomiary_Chrono. Czy na pewno usunąć WSZYSTKO?'))return;
+ if(!confirm('OSTATNIE POTWIERDZENIE: usunąć lokalną historię i kolejkę wysyłki?'))return;
+ if(write([]))history();else alert('Nie udało się wyczyścić danych');
+});
+window.addEventListener('beforeunload',e=>{if(mode==='countdown'||mode==='green'){e.preventDefault();e.returnValue=''}});
+window.addEventListener('online',()=>scheduleSync(300));
+document.addEventListener('visibilitychange',()=>{tick();if(!document.hidden)scheduleSync(300)});
+let storedOS='';try{storedOS=localStorage.getItem(OSKEY)||''}catch{}
+if(allowed.includes(storedOS))$('os').value=storedOS;
+// Po przerwaniu aplikacji podczas wysyłki rekord 'sending' jest ponawiany po otwarciu.
+history();reset();let halted=false;try{halted=localStorage.getItem(HALTKEY)==='1'}catch{}
+if(halted){mode='stopped';$('app').className='app stopped';$('panel').className='panel halted';
+ $('display').className='digits stop';$('display').textContent=`STOP ${$('os').value||'OS'}`;
+ $('haltNote').textContent='STARTY WSTRZYMANE · wymagana zgoda na wznowienie';}
+setInterval(tick,30);scheduleSync(900);
 })();
 </script></body></html>
