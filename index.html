@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827">
-<title>KJS CHRONO MOBILE v1.4 — GOOGLE SHEETS</title>
+<title>KJS CHRONO MOBILE v1.5 — AKR CONTROL</title>
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f5f7ff;background:#0d1422;color-scheme:dark}*{box-sizing:border-box}body{margin:0;padding:env(safe-area-inset-top) 14px env(safe-area-inset-bottom)}main{max-width:540px;margin:auto;padding:18px 0 35px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}.tag{font-size:11px;padding:7px 9px;border-radius:20px;background:#26354c;color:#d7e4f9}.panel{background:#172338;border:1px solid #31415b;border-radius:18px;padding:17px;margin-top:15px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}label{font-size:12px;color:#b6c5d9;display:block;margin-bottom:7px}select,input{width:100%;border:1px solid #425571;background:#0f1b2d;color:white;padding:14px 12px;border-radius:12px;font-size:20px}input{font-size:26px;font-weight:700;text-align:center}.clock{text-align:center;padding:22px 0 14px}.clock small{color:#b6c5d9}.clock strong{display:block;font-variant-numeric:tabular-nums;font-size:clamp(35px,9vw,52px);letter-spacing:1px;margin-top:8px}.clock p{font-size:12px;color:#a9c6de;margin:6px 0 0}.capture{width:100%;border:0;border-radius:18px;padding:27px 12px;font-size:27px;font-weight:900;background:#18a558;color:white;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.capture.meta{background:#e36c20}.capture:active{transform:scale(.985)}.status{min-height:26px;margin:13px 0 0;text-align:center;color:#b7f6d0;font-size:14px}.history-head{display:flex;align-items:center;justify-content:space-between}h2{font-size:17px;margin:0}button.small{background:#293a55;color:#fff;border:1px solid #49607f;padding:9px 12px;border-radius:9px}.entry{padding:12px 0;border-top:1px solid #31415b;display:flex;justify-content:space-between;gap:8px;align-items:center}.entry:first-child{border-top:0}.entry strong{font-size:17px}.entry span{color:#b7c9df;font-size:12px}.muted{color:#9eb1ca;font-size:13px;line-height:1.5}.warning{color:#ffcf8d;font-size:12px;line-height:1.5}.actions{display:flex;gap:8px;flex-wrap:wrap}.edit{margin-top:10px;padding:12px;background:#0f1b2d;border-radius:12px}.edit input{font-size:20px}.edit button{margin-top:9px}.entry{align-items:flex-start}.entry .small{margin-top:8px}.save{background:#116b45!important}.hint{font-size:12px;color:#b6c5d9;margin:7px 0 0}
-.queueinfo{font-size:14px;color:#e7f0ff;line-height:1.6}.queueinfo strong{color:#ffcf8d}.delivery{display:block;color:#ffcf8d;margin-top:5px;font-size:12px}</style>
+.queueinfo{font-size:14px;color:#e7f0ff;line-height:1.6}.queueinfo strong{color:#ffcf8d}.delivery{display:block;color:#ffcf8d;margin-top:5px;font-size:12px}.osline{font-size:14px;margin-top:10px;color:#d6e4fa}.osline strong{font-size:18px;color:#86efac}.osline.warn strong{color:#ffcf8d}.emergency{margin-top:12px;border-top:1px solid #425571;padding-top:12px}.emergency summary{cursor:pointer;color:#ffcf8d;font-weight:700}.emergency button{margin-top:8px}.modal{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}.modal[hidden]{display:none}.dialog{max-width:450px;width:100%;background:#172338;border:2px solid #fbbf24;border-radius:18px;padding:22px;text-align:center}.dialog h2{color:#fbbf24;font-size:25px}.dialog button{width:100%;padding:17px;background:#116b45;color:white;border:0;border-radius:12px;font-weight:800;font-size:18px}.dialog button.secondary{background:#293a55;margin-top:10px}.capture:disabled{opacity:.45;cursor:not-allowed}</style>
 </head>
 <body><main>
-<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.4 · GOOGLE SHEETS</span></div>
-<section class="panel"><div class="grid"><div><label for="os">ODCINEK</label><select id="os"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
-<div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
+<div class="head"><h1>🏁 KJS CHRONO MOBILE</h1><span class="tag">v1.5 · AKR CONTROL</span></div>
+<section class="panel"><div class="grid"><div><label>ODCINEK — CKR</label><div id="activeOs" style="font-size:29px;font-weight:900;padding:8px 0">—</div></div><div><label for="mode">STANOWISKO</label><select id="mode"><option>START</option><option>META</option></select></div></div>
+<div id="osState" class="osline warn" role="status">Oczekiwanie na konfigurację CKR…</div><details class="emergency" id="emergency"><summary>AWARYJNA ZMIANA OS (polecenie CKR)</summary><p class="warning">Używaj tylko na polecenie CKR przez radio. Tryb ręczny nie zostanie nadpisany automatycznie.</p><label for="manualOs">ODCINEK</label><select id="manualOs"><option>OS1</option><option>OS2</option><option>OS3</option><option>OS4</option><option>OS5</option><option>OS6</option></select><button type="button" class="small" id="manualApply">USTAW OS RĘCZNIE</button><button type="button" class="small" id="autoReturn">WRÓĆ DO OS Z CKR</button></details><div class="clock"><small>AKTUALNY CZAS TELEFONU</small><strong id="clock">--:--:--,--</strong><p>Wyświetlanie do 0,01 s · zegar urządzenia</p></div>
 <label for="crew">NUMER ZAŁOGI</label><input id="crew" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="np. 27" autocomplete="off"><p class="hint">Możesz odbić czas bez numeru i uzupełnić go później w historii.</p></section>
 <section class="panel"><button class="capture" id="capture" type="button">ODBIJ START</button><div class="status" id="status" role="status">Gotowy do pomiaru</div></section>
 <section class="panel"><h2>KOLEJKA WYSYŁKOWA</h2><div class="queueinfo" id="queueinfo" role="status" style="margin-top:10px">Sprawdzanie kolejki…</div><p class="hint">Wysyłka automatyczna do Google Sheets. Ze względu na ograniczenia odpowiedzi Google nie można potwierdzić zapisu z poziomu przeglądarki — sprawdzaj arkusz. Nie kasuj kolejki bez weryfikacji.</p></section>
-<section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><div class="actions"><button type="button" class="small save" id="export">ZAPISZ TXT</button><button type="button" class="small" id="clear">Wyczyść demo</button></div></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
+<section class="panel"><div class="history-head"><h2>OSTATNIE POMIARY</h2><div class="actions"><button type="button" class="small save" id="export">ZAPISZ TXT</button><button type="button" class="small" id="clear">Wyczyść historię</button></div></div><div id="history" class="muted" style="margin-top:12px">Brak pomiarów.</div></section>
 <p class="warning">⚠️ Żądanie wysyłki ≠ potwierdzony zapis w arkuszu. Sprawdź arkusz przed rajdem. Zegary urządzeń wymagają synchronizacji.</p>
-</main><script>
+</main><div class="modal" id="osModal" hidden role="dialog" aria-modal="true" aria-labelledby="osModalTitle"><div class="dialog"><h2 id="osModalTitle">ZMIANA OS</h2><p id="osModalText"></p><button type="button" id="osConfirm">POTWIERDZAM ZMIANĘ OS</button><button type="button" class="secondary" id="osKeep" hidden>POZOSTAŃ W TRYBIE RĘCZNYM</button></div></div><script>
 (function(){
 'use strict';
 var $=function(id){return document.getElementById(id)};
@@ -26,9 +26,64 @@ var storageKey='kjs_mobile_demo_v1'; // Zachowujemy dane z wersji 1.2.3
 var settingsKey='kjs_mobile_station_settings_v1';
 var GOOGLE_SHEETS_URL='https://script.google.com/macros/s/AKfycbxwbRPdy_GlFdqOyzvFcEx1z5d4w3pmyqbTAsYglZlOV01290lMHCX8lKjwMIYYzPh8Lw/exec';
 var sending=false;
+var OS_ENDPOINT='https://script.google.com/macros/s/AKfycbwp1H2pmreks-fQzKmxXA3zChlOaBCyIwdqfN3WuNpxjta2f93CBk1UilgCTegTjFDo/exec';
+var osSettingsKey='akr_chrono_mobile_os_v15';
+var osState={active:null,server:null,manual:false,lastSuccess:0,pending:null};
+var osPollBusy=false,osPollTimer=null,osScript=null,osTimeout=null;
+function validOS(x){return /^OS[1-6]$/.test(x||'')}
+function storeOS(){try{localStorage.setItem(osSettingsKey,JSON.stringify({active:osState.active,server:osState.server,manual:osState.manual,lastSuccess:osState.lastSuccess}))}catch(e){}}
+function restoreOS(){try{var x=JSON.parse(localStorage.getItem(osSettingsKey)||'null');if(x){if(validOS(x.active))osState.active=x.active;if(validOS(x.server))osState.server=x.server;osState.manual=!!x.manual;osState.lastSuccess=Number(x.lastSuccess)||0}}catch(e){} }
+function osLabel(){return osState.manual?'RĘCZNY — polecenie CKR':osState.lastSuccess&&Date.now()-osState.lastSuccess<45000?'CKR — odczyt aktualny':'OSTATNIO ZAPISANY / NIEZWERYFIKOWANY'}
+function renderOS(){
+ $('activeOs').textContent=osState.active||'BRAK OS';
+ $('manualOs').value=osState.active||osState.server||'OS1';
+ var fresh=osState.lastSuccess&&Date.now()-osState.lastSuccess<45000;
+ $('osState').className='osline'+(fresh&&!osState.manual?'':' warn');
+ var when=osState.lastSuccess?new Date(osState.lastSuccess).toLocaleTimeString('pl-PL'):'nigdy';
+ $('osState').textContent=osLabel()+' · ostatni odczyt: '+when+(osState.manual&&osState.server?' · CKR: '+osState.server:'');
+ $('capture').disabled=!validOS(osState.active)||!!osState.pending;
+}
+function showOSChange(next,kind){
+ if(!validOS(next))return;
+ osState.pending={os:next,kind:kind};
+ $('osModalTitle').textContent=kind==='conflict'?'UWAGA — ROZBIEŻNOŚĆ OS':'ZMIANA OS';
+ $('osModalText').textContent='Na urządzeniu: '+(osState.active||'BRAK')+' → CKR: '+next+'. '+(kind==='conflict'?'Masz włączony tryb ręczny. Potwierdź przejście na OS z CKR lub pozostań w trybie ręcznym.':'Potwierdź zmianę odcinka przed dalszym pomiarem.');
+ $('osKeep').hidden=kind!=='conflict';
+ $('osModal').hidden=false;renderOS();
+}
+function hideOSChange(){osState.pending=null;$('osModal').hidden=true;renderOS()}
+$('osConfirm').addEventListener('click',function(){if(!osState.pending)return;osState.active=osState.pending.os;osState.manual=false;storeOS();hideOSChange();$('status').textContent='✓ Potwierdzono '+osState.active+' z CKR.'});
+$('osKeep').addEventListener('click',function(){if(!osState.pending)return;osState.manual=true;storeOS();hideOSChange();$('status').textContent='Tryb ręczny utrzymany. Zgłoś rozbieżność do CKR.'});
+$('manualApply').addEventListener('click',function(){var next=$('manualOs').value;if(!validOS(next))return;if(!confirm('CKR poleciło ręczne ustawienie '+next+'? Pomiary będą przypisywane do tego OS.'))return;osState.active=next;osState.manual=true;storeOS();hideOSChange();$('status').textContent='⚠️ Awaryjnie ustawiono '+next+'. Zgłoś do CKR.'});
+$('autoReturn').addEventListener('click',function(){if(!validOS(osState.server)){alert('Brak poprawnego odczytu OS z CKR.');return}if(Date.now()-osState.lastSuccess>45000){alert('Odczyt CKR jest nieaktualny. Poczekaj na połączenie.');return}if(osState.server===osState.active){osState.manual=false;storeOS();renderOS();return}showOSChange(osState.server,'conflict')});
+function finishPoll(){if(osTimeout){clearTimeout(osTimeout);osTimeout=null}if(osScript){osScript.remove();osScript=null}osPollBusy=false;renderOS()}
+window.AKR_CHRONO_OS_CALLBACK=function(payload){
+ if(!osPollBusy)return;
+ if(payload&&payload.ok===true&&validOS(payload.os)){
+  osState.server=payload.os;osState.lastSuccess=Date.now();
+  if(!osState.manual){if(!osState.active){osState.active=payload.os}else if(osState.active!==payload.os&&(!osState.pending||osState.pending.os!==payload.os))showOSChange(payload.os,'change')}
+  else if(osState.active!==payload.os&&(!osState.pending||osState.pending.os!==payload.os))showOSChange(payload.os,'conflict');
+  storeOS();
+ }
+ finishPoll();
+};
+function pollOS(){
+ if(osPollBusy||document.hidden)return;
+ osPollBusy=true;
+ osScript=document.createElement('script');
+ osScript.src=OS_ENDPOINT+'?t='+Date.now();
+ osScript.onerror=finishPoll;
+ osTimeout=setTimeout(finishPoll,9000);
+ document.head.appendChild(osScript);
+}
+restoreOS();renderOS();
+setInterval(function(){renderOS();pollOS()},15000);
+window.addEventListener('online',pollOS);
+document.addEventListener('visibilitychange',function(){if(!document.hidden)pollOS()});
+pollOS();
 function normalizeRecord(r){if(!Number.isInteger(r.wersja)||r.wersja<1){r.wersja=1;r.delivery='verify';r.legacy=true}if(r.delivery==='confirmed')r.delivery='verify';return r}
-function saveSettings(){try{localStorage.setItem(settingsKey,JSON.stringify({os:$('os').value,mode:$('mode').value}))}catch(e){}}
-function restoreSettings(){try{var s=JSON.parse(localStorage.getItem(settingsKey)||'null');if(s){if(['OS1','OS2','OS3','OS4','OS5','OS6'].includes(s.os))$('os').value=s.os;if(['START','META'].includes(s.mode))$('mode').value=s.mode}}catch(e){}}
+function saveSettings(){try{localStorage.setItem(settingsKey,JSON.stringify({mode:$('mode').value}))}catch(e){}}
+function restoreSettings(){try{var s=JSON.parse(localStorage.getItem(settingsKey)||'null');if(s){if(['START','META'].includes(s.mode))$('mode').value=s.mode}}catch(e){}}
 var records=[];
 try{records=JSON.parse(localStorage.getItem(storageKey)||'[]');if(!Array.isArray(records))records=[];records.forEach(normalizeRecord)}catch(e){records=[]}
 function two(n){return String(n).padStart(2,'0')}
@@ -86,12 +141,13 @@ function queueStatus(r){return r.delivery==='verify'?'Wysłano żądanie — spr
 }
 function updateMode(){var meta=$('mode').value==='META';$('capture').textContent=meta?'ODBIJ METĘ':'ODBIJ START';$('capture').classList.toggle('meta',meta)}
 $('mode').addEventListener('change',function(){updateMode();saveSettings()});
-$('os').addEventListener('change',saveSettings);
+
 $('capture').addEventListener('click',function(){
+ if(!validOS(osState.active)||osState.pending){$('status').textContent='Potwierdź aktywny OS przed pomiarem.';return}
  var now=new Date();
  var crew=$('crew').value.trim();
  if(crew && !/^\d{1,4}$/.test(crew)){$('status').textContent='Numer: 1–4 cyfry albo zostaw puste.';return}
- var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:$('os').value,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),delivery:'pending',wersja:1,corrections:[]};
+ var r={id:String(now.getTime())+'-'+Math.random().toString(36).slice(2,10),crew:crew,os:osState.active,mode:$('mode').value,time:time(now),date:now.toLocaleDateString('pl-PL'),iso:now.toISOString(),delivery:'pending',wersja:1,corrections:[]};
  records.unshift(r);
  var ok=persist();
  if(ok)$('status').textContent='✓ Odbito '+r.mode+' · #'+(r.crew||'BRAK NR')+' · '+r.time;
@@ -102,7 +158,7 @@ $('capture').addEventListener('click',function(){
 });
 $('export').addEventListener('click',async function(){
  if(!records.length){alert('Nie ma jeszcze pomiarów do zapisania.');return}
- var lines=['KJS CHRONO MOBILE v1.3 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: status wysłano nie oznacza potwierdzenia zapisu w Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID | STATUS'];
+ var lines=['KJS CHRONO MOBILE v1.5 — KOPIA POMIARÓW','Eksport: '+new Date().toLocaleString('pl-PL'),'Liczba pomiarów: '+records.length,'UWAGA: status wysłano nie oznacza potwierdzenia zapisu w Google Sheets','','DATA | OS | RODZAJ | NR ZAŁOGI | CZAS | ID | STATUS'];
  records.slice().reverse().forEach(function(r){
   lines.push([r.date||'',r.os||'',r.mode||'',r.crew||'BRAK NR',r.time||'',r.id||'',queueStatus(r)].join(' | '));
   (r.corrections||[]).forEach(function(c){lines.push('  KOREKTA NR: '+c.from+' -> '+c.to+' ('+c.at+')')});
